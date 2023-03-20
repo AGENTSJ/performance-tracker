@@ -61,3 +61,16 @@ getreq.onsuccess = function(event){
     }
 
 }
+
+
+
+// to check for usage
+
+function checkstoreage(){
+  if ('storage' in navigator && 'estimate' in navigator.storage) {
+navigator.storage.estimate().then(function(estimate) {
+  console.log('Usage', estimate.usage);
+  console.log('Quota', estimate.quota);
+});
+}
+}

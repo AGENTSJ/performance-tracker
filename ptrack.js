@@ -3,15 +3,13 @@ bttno.addEventListener('click',addex)
 let version;
 let storeNames=[];
 
-manager();
-// deledb();
-datapoppulator()
-
+manager();//runs first to set all global variables//version//storenames
+// deledb()
 function addex(){
         let exername = document.getElementById('ex-name').value;
         let exweight = document.getElementById('ex_weight').value;
         //changed
-        if(!storeNames.includes(exername)){
+        if(!storeNames.includes(exername)&&exername!=''){
         drawex(exername,exweight)
         initdb(exername,exweight);
     }else{
@@ -27,10 +25,16 @@ function addset(event){
     addrepdb(exkey,exweight);
 }
 function deledb(){
-    let delereq = indexedDB.deleteDatabase('ptrack');
-    delereq.onsuccess = function(event){
-        console.log('removed'+`${event.result}`);
-        console.log(event);
+    let confirm = prompt('Are you sure you want to delete all the data if yes type YES else No');
+    if (confirm.toLocaleUpperCase()=='YES'){
+
+        let delereq = indexedDB.deleteDatabase('ptrack');
+        delereq.onsuccess = function(event){
+            console.log('removed'+`${event.result}`);
+            console.log(event);
+        }
+    }else{
+        return 0;
     }
 }
 function manager(){
@@ -42,10 +46,8 @@ function manager(){
     db.close();
     console.log('testdb ran suceesfully-version avilable');
     storeNames = Array.from(db.objectStoreNames);
-    // console.log(storeNames);
-    if(storeNames.lenght != 0){
-        // console.log(storeNames.length);
-        // datapoppulator(storeNames);
+    if(storeNames.lenght != 0){  
+        datapoppulator(storeNames);
     }
     }
     dbreq.onerror = function(){
@@ -54,24 +56,26 @@ function manager(){
   
 }
 function initdb(e,w){
-    // console.log(version);
+    
   let data ={ kg: parseInt(w,10),rep:[]} 
   let db;
   let transaction;
   let store
   let storename = e.replaceAll(' ','');
-//   console.log(storename);
+
 
   let dbreq = indexedDB.open('ptrack',version+1);
     dbreq.onerror = function (params) {
     console.log('error in initilisation');
-    
     }
     dbreq.onupgradeneeded = function(event){
+    console.log('dbreq is starting');
     db = event.target.result;
     db.createObjectStore(storename,{ keyPath: 'kg'});
     }
     dbreq.onsuccess = function(event){
+        //
+        console.log('dbreq is compelete');
     db = event.target.result;
     transaction = db.transaction([storename],'readwrite');
     store = transaction.objectStore(storename);
@@ -82,8 +86,6 @@ function initdb(e,w){
         adddata.onerror = function(){
             console.log('error in add data');
             alert('exersise already exsist');
-            
-
         }
     }
     
@@ -114,33 +116,32 @@ function addrepdb(id,w){
     
 }
 function datapoppulator(array){
-
+    // console.log(array);
     let getdata = indexedDB.open('ptrack');
     getdata.onerror = function(){
         console.log('error');
     }
     getdata.onsuccess=function (params) {
         let db = params.target.result;
-        let transaction = db.transaction(['bench'],'readonly');
-        let store = transaction.objectStore('bench')
-   
-    let begin = 0;
-        store.openCursor().onsuccess = function (event) {
+        for(i=0;i<array.length;i++){
+            let storename = array[i];
+            let transaction = db.transaction([array[i]],'readonly');
+            let store = transaction.objectStore(array[i]);
+            let begin = 0;
+            store.openCursor().onsuccess = function (event) {
             const cursor = event.target.result;
-        
             if (cursor) {
             if(begin==0){
-                drawex('bench',cursor.value.kg);
+                drawex(storename,cursor.value.kg);
                 begin = 1;
             }else{
-                drawset(cursor.value.kg,'bench')
+                drawset(cursor.value.kg,storename)
             }
             cursor.continue();
-            
-        }
-    
-        
+        }   
     }
+    }
+        
     //  begin=0;   
         
     }
@@ -201,7 +202,7 @@ function drawex(exername,exweight){
         let heading = document.createElement('div');
         heading.setAttribute('class','head');
         heading.innerText = exername;
-        artist(exkey,exweight,0,excont,parent,heading)
+        artist(exkey,exweight,0,excont,parent,heading)//0 denotes callby drawex fn to artist
         }else{
             alert('provide correct format')
         }
