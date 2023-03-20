@@ -3,8 +3,7 @@ bttno.addEventListener('click',addex)
 let version;
 let storeNames=[];
 
-manager();//runs first to set all global variables//version//storenames
-// deledb()
+manager();
 function addex(){
         let exername = document.getElementById('ex-name').value;
         let exweight = document.getElementById('ex_weight').value;
@@ -29,10 +28,11 @@ function deledb(){
     if (confirm.toLocaleUpperCase()=='YES'){
 
         let delereq = indexedDB.deleteDatabase('ptrack');
-        delereq.onsuccess = function(event){
+            delereq.onsuccess = function(event){
             console.log('removed'+`${event.result}`);
             console.log(event);
         }
+        location.reload();
     }else{
         return 0;
     }
@@ -57,26 +57,25 @@ function manager(){
 }
 function initdb(e,w){
     
-  let data ={ kg: parseInt(w,10),rep:[]} 
+  let data ={ kg: parseInt(w,10),rep:[0,0]} 
   let db;
   let transaction;
   let store
   let storename = e.replaceAll(' ','');
 
-
-  let dbreq = indexedDB.open('ptrack',version+1);
+  version = version+1
+    console.log(version);
+  let dbreq = indexedDB.open('ptrack',version);
     dbreq.onerror = function (params) {
     console.log('error in initilisation');
     }
     dbreq.onupgradeneeded = function(event){
-    console.log('dbreq is starting');
     db = event.target.result;
-    db.createObjectStore(storename,{ keyPath: 'kg'});
-    }
-    dbreq.onsuccess = function(event){
-        //
-        console.log('dbreq is compelete');
+    db.createObjectStore(storename,{ keyPath: 'kg'}); 
+}
+dbreq.onsuccess = function(event){
     db = event.target.result;
+    
     transaction = db.transaction([storename],'readwrite');
     store = transaction.objectStore(storename);
         let adddata = store.put(data)
@@ -88,9 +87,6 @@ function initdb(e,w){
             alert('exersise already exsist');
         }
     }
-    
-
-
 }
 function addrepdb(id,w){
     weight = parseInt(w,10)
@@ -100,7 +96,7 @@ function addrepdb(id,w){
     }
     dbreq.onsuccess = function (params) {
         let db = params.target.result;
-        let data = {kg: weight,rep:[]};
+        let data = {kg: weight,rep:[0,0]};
         let transaction = db.transaction([id],'readwrite');
         let store = transaction.objectStore(id);
 
@@ -132,10 +128,10 @@ function datapoppulator(array){
             const cursor = event.target.result;
             if (cursor) {
             if(begin==0){
-                drawex(storename,cursor.value.kg);
+                drawex(storename,cursor.value.kg,cursor.value.rep);
                 begin = 1;
             }else{
-                drawset(cursor.value.kg,storename)
+                drawset(cursor.value.kg,storename,cursor.value.rep)
             }
             cursor.continue();
         }   
@@ -147,7 +143,10 @@ function datapoppulator(array){
     }
 
 }
-function artist(exkey,exweight,callby,excont,parent,heading){
+function artist(exkey,exweight,callby,excont,parent,heading,rep){
+    if(rep==null){
+        rep=[0,0]
+    }
     let inputs = document.createElement('div');
             inputs.setAttribute('class','ip');
             let inputweight = document.createElement('input');
@@ -156,16 +155,17 @@ function artist(exkey,exweight,callby,excont,parent,heading){
             inputweight.value=exweight;
             let inputexrep = document.createElement('input');
             inputexrep.setAttribute('class','reps');
-            inputexrep.value=0;
             inputexrep.setAttribute('id',`${exkey}-${exweight}-exrep`)
             let inputrep = document.createElement('input');
             inputrep.setAttribute('class','reps');
-            inputrep.value=0;
+            inputrep.value=rep.pop();
+            inputexrep.value=rep.pop();
             inputrep.setAttribute('id',`${exkey}-${exweight}-rep`)
             let newrep = document.createElement('input');
             newrep.setAttribute('class','reps');
             newrep.setAttribute('id',`${exkey}-${exweight}-newrep`)
             let submit = document.createElement('button');
+            submit.setAttribute('id',`${exkey}-${exweight}`)
             submit.setAttribute('class','btn');
             submit.setAttribute('onclick','submitdata(event)');
             submit.innerText = 'submit'
@@ -192,7 +192,7 @@ function artist(exkey,exweight,callby,excont,parent,heading){
                 excont.appendChild(set);
             }
 }
-function drawex(exername,exweight){
+function drawex(exername,exweight,rep){
     let exkey = exername.replaceAll(' ','')
         let parent = document.getElementById('maincont');
         if(exername!=null&& !isNaN(exweight)&&exweight!=''){
@@ -202,18 +202,62 @@ function drawex(exername,exweight){
         let heading = document.createElement('div');
         heading.setAttribute('class','head');
         heading.innerText = exername;
-        artist(exkey,exweight,0,excont,parent,heading)//0 denotes callby drawex fn to artist
+        artist(exkey,exweight,0,excont,parent,heading,rep)//0 denotes callby drawex fn to artist
         }else{
             alert('provide correct format')
         }
 }
-function drawset(exweight,temp){
+function drawset(exweight,temp,rep){
+    
     if(exweight&& !isNaN(exweight)){
         let exkey = temp.split('-')[0]
         // console.log(exkey);
-        artist(exkey,exweight,1);
+        artist(exkey,exweight,1,null,null,null,rep);
         }
         else{
             return 0;
         }
+}
+function submitdata(event){
+    let mainkey = event.target.id
+
+    let exrepkey = `${mainkey}-exrep`;
+    let repkey = `${mainkey}-rep`;
+    let newrepkey =`${mainkey}-newrep`;
+    
+    let exrep = document.getElementById(exrepkey);
+    let rep = document.getElementById(repkey).value;
+    let newrep = document.getElementById(newrepkey).value;
+
+   
+
+if(newrep!=''){
+
+    let dbreq = indexedDB.open('ptrack');
+    dbreq.onsuccess = function(event){
+        let db = event.target.result;
+        let transaction = db.transaction([`${mainkey.split('-')[0]}`],'readwrite');
+        let store = transaction.objectStore(`${mainkey.split('-')[0]}`);
+        let kg = parseInt(mainkey.split('-')[1],10) 
+        
+        
+        let data = {kg:kg,rep:[parseInt(rep,10),parseInt(newrep,10)]}
+        
+        let addata = store.put(data);
+        addata.onsuccess = function(){
+            console.log(data);
+        }
+        let getdata = store.get(kg);
+        getdata.onsuccess = function(event){
+            console.log(event.target.result);
+        }
+    } 
+    document.getElementById(newrepkey).value = null;
+    document.getElementById(repkey).value = newrep;
+    document.getElementById(exrepkey).value = rep
+    
+}else{
+    alert('provide correct format')
+}
+
 }
