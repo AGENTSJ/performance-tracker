@@ -39,3 +39,24 @@
 </body>
 <script src="ptrack.js"></script>
 </html>
+
+
+<!-- let db = params.target.result;
+        for(i=0;i<array.length;i++){
+            let storename = array[i];
+            let transaction = db.transaction([array[i]],'readonly');
+            let store = transaction.objectStore(array[i]);
+            let begin = 0;
+            store.openCursor().onsuccess = function (event) {
+            const cursor = event.target.result;
+            if (cursor) {
+            if(begin==0){
+                drawex(storename,cursor.value.kg,cursor.value.rep);
+                begin = 1;
+            }else{
+                drawset(cursor.value.kg,storename,cursor.value.rep)
+            }
+            cursor.continue();
+        }   
+    }
+    } -->
