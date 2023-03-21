@@ -1,0 +1,228 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    color: #8A7AAE;
+
+}
+.maincont{
+    
+    min-width: 100%;
+    display: grid;
+    grid-template-columns: auto;
+    align-items: center;
+    justify-items: center;
+}
+.dis{
+    pointer-events: none;
+}
+.ip{
+    margin-bottom: 10px;
+}
+.weight{
+    margin-right: 0px;
+    height: 30px;
+    width: 100px;
+    border-radius: 3px;
+    margin-left: 10px;
+    border: 1px solid;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+}
+.reps{
+     margin-right: 0px;
+    height: 30px;
+    width: 100px;
+    border: 1px solid;
+    border-radius: 3px;
+    margin-left: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    
+}
+
+.excont{
+    display:grid;
+    grid-template-columns: auto;
+    margin-bottom: 40px;
+    border: 2px solid black;
+    border-radius: 2px;
+    height: 65px;
+    overflow: hidden;
+    transition: 0.3s;
+}
+.head{
+    font-size: x-large;
+    font-weight: bold;
+    margin-bottom: 30px;
+    margin-top: 20px;
+    margin-left: 10px;
+    cursor: pointer;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.cross{
+    font-size: large;
+    color: rgba(248, 86, 86, 0.664);
+    width: 20px;
+    transition: 0.3s;
+    
+
+}
+.cross:active{
+    transform: translateY(5px);
+    
+}
+
+.btn{
+    align-self: flex-end;
+    justify-self: baseline;
+    margin-left: 10px;
+    margin-bottom: 20px;
+    background-color: #D3B46A;
+    color: black;
+    margin-right: 10px;
+    width: 100px;
+   height: 40px;
+   border: none;
+   border-radius: 5px;
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.header{
+    font-size: 27px;
+    background-color: #452F74;
+    height: 150px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    margin-bottom: 20px;
+    color: #ccbcf1;
+}
+.addcont{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    margin-bottom: 100px;
+}
+.addcont input{
+    height: 40px;
+    margin-right: 20px;
+}
+.delbtn{
+     height: 45px;
+    width: 75px;
+    margin-right: 20px;
+    background-color: rgba(255, 72, 72, 0.87);
+    border-radius: 2px;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: 0.3s;
+}
+.delbtn:active{
+    transform: translateY(5px);
+}
+#addr{
+    height: 45px;
+    width: 75px;
+    margin-right: 20px;
+    border: none;
+    background-color:#8A7AAE;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: 0.3s;
+}
+#addr:active{
+    transform: translateY(5px);
+}
+.dele{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.desc{
+    width: 100%;
+    height: 20px;
+    overflow: hidden;
+    transition: 0.2s;
+
+}
+.desc textarea{
+    width: 96.5%;
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
+    font-family: Arial, Helvetica, sans-serif;
+    height: 100px;
+    font-size: large;
+    padding: 10px;
+    
+}
+.desc textarea:focus{
+    outline: none;
+}
+.rotbtn{
+    font-weight: 1000;
+    font-size: large;
+    margin-left: auto;
+    margin-right: auto;
+    width: 40px;
+    padding-left: 25px;
+    border-radius: 100px;
+    cursor: pointer;
+    transform: rotate(180deg);
+    transition: 0.3s; 
+}
+
+
+@media screen and (max-width:1300px) {
+  
+    .delbtn{
+        height: 30px;
+    }
+    .header{
+        height: 100px;
+    }
+    .reps{
+        width: 68px;
+        margin-left: 10px;
+    }
+    .weight{
+        width: 50px;
+        margin-right: 10px;
+    }
+    
+    .head{
+        margin-left: 10px;
+    }
+    .addcont input{
+        height: 30px;
+        width: 75px;
+        margin-right: 10px;
+    }
+    #addr{
+        height: 35px;
+    }
+    .btn{
+        height: 35px;
+        width: 60px;
+    }
+    .ip .btn{
+        margin-left: 154px;
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+    .ip{
+        margin-bottom: 10px;
+    }
+    .header{
+        font-size: large;
+        padding-top: 10px;
+    }
+
+}
