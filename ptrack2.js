@@ -1,27 +1,45 @@
 let bttno= document.getElementById('addr');
 bttno.addEventListener('click',addex)
 let version;
-
+let datedata = new Map([
+    [0,'sunday'],
+    [1,'monday'],
+    [2,'tuesday'],
+    [3,'wednesday'],
+    [4,'thursday'],
+    [5,'friday'],
+    [6,'saturday'],
+    [7,'NA']
+])
 
 manager();
 function addex(){
         let exername = document.getElementById('ex-name').value;
-        let exweight = document.getElementById('ex_weight').value;
-        if(exername!=''&&exweight!=''){
-        drawex(exername,exweight)
-        initdb(exername,exweight);
-        document.getElementById('ex-name').value = null;
-        document.getElementById('ex_weight').value = null;
-    }else{
-        alert('alerady exsist')
-    }
+        let exweight = document.getElementById('ex_weight').value;    
+            if(exername!=null&& !isNaN(exweight)&&exweight!=''){
+                if(exername.length<=15){
+                    drawex(exername,exweight)
+                    initdb(exername,exweight);
+                    document.getElementById('ex-name').value = null;
+                    document.getElementById('ex_weight').value = null;
+                }else{
+                    alert('Shorten the name..what is this an essay?')
+                }
+        }else{
+            alert('alerady exsist or provide correct format')
+        }   
 }
 function addset(event){
     let exweight = prompt('give the weight');
-    let temp = event.target.parentNode.id;
-    let exkey = temp.split('-')[0]
-    drawset(exweight,temp)
-    addsetdb(exkey,exweight);
+    if(exweight==null||exweight==''){
+        return
+    }else{
+        console.log(exweight);
+        let temp = event.target.parentNode.id;
+        let exkey = temp.split('-')[0]
+        drawset(exweight,temp)
+        addsetdb(exkey,exweight);
+    }
 }
 function deledb(){
     let confirm = prompt('Are you sure you want to delete all the data if yes type YES else No');
@@ -45,14 +63,14 @@ function manager(){
     test('startup',1);
     db.close();
     console.log('testdb ran suceesfully-version avilable');
-        datapoppulator();
+        datapoppulator(1);
     }
     dbreq.onerror = function(){
     console.log('version not avilable');
     }
-  
 }
 function initdb(e,w){
+    add=0;
     if(version==1){
         version=version+1;
     }
@@ -60,7 +78,7 @@ function initdb(e,w){
     let transaction;
     let store
     let storename = e.replaceAll(' ','');
-    let data = {workname:storename,kg:[parseInt(w,10)],rep:[[0,0]],desc:''}
+    let data = {workname:storename,kg:[parseInt(w,10)],rep:[[0,0]],desc:'',day:datedata.get(new Date().getDay())}
     let dbreq = indexedDB.open('ptrack',version);
     dbreq.onerror = function (params) {
     console.log('error in initilisation');
@@ -72,6 +90,8 @@ dbreq.onsuccess = function(event){
     store = transaction.objectStore('workout');
         let adddata = store.add(data)
         adddata.onsuccess = function(){
+            let welcome = document.getElementById('welc');
+            welcome.style['display']='none' 
             alert('data added')
         }
         adddata.onerror = function(){
@@ -111,7 +131,7 @@ function addsetdb(id,w){
         }
     } 
 }
-function datapoppulator(){
+function datapoppulator(callby){
     let getdata = indexedDB.open('ptrack');
     getdata.onerror = function(){
         console.log('error');
@@ -125,12 +145,23 @@ function datapoppulator(){
             if(cursor){
                 let kgarray = cursor.value.kg;
                 let reparray = cursor.value.rep;
-
+                let day = cursor.value.day
                 let firstkg = kgarray.pop();
                 let firstrep = reparray.pop();
-                drawex(cursor.value.workname,firstkg,firstrep);
-                for(i=0;i<kgarray.length;i++){
-                    drawset(kgarray[i],cursor.value.workname,reparray[i]);
+                let welcome = document.getElementById('welc');//removing the welcome cont
+                welcome.style['display']='none' 
+                if(callby==0){
+                    drawex(cursor.value.workname,firstkg,firstrep,day);
+                    for(i=0;i<kgarray.length;i++){
+                        drawset(kgarray[i],cursor.value.workname,reparray[i]);
+                    }
+                }if(callby==1){
+                    if(datedata.get(new Date().getDay())==cursor.value.day||cursor.value.day==''||cursor.value.day=='NA'){
+                        drawex(cursor.value.workname,firstkg,firstrep,day);
+                        for(i=0;i<kgarray.length;i++){
+                            drawset(kgarray[i],cursor.value.workname,reparray[i]);
+                        }
+                    }
                 }
                 cursor.continue();
             }
@@ -143,6 +174,13 @@ function artist(exkey,exweight,callby,excont,parent,heading,rep){
     }
     let inputs = document.createElement('div');
             inputs.setAttribute('class','ip');
+            inputs.setAttribute('id',`${exkey}-${exweight}-ip`)
+            let repcross = document.createElement('div');
+            repcross.innerText = 'X'
+            repcross.setAttribute('class','cross');
+            repcross.setAttribute('id',`${exkey}-${exweight}-cross`)
+            repcross.setAttribute('onclick','deleterep(event)')
+
             let inputweight = document.createElement('input');
             inputweight.setAttribute('class','weight dis');
             inputweight.setAttribute('id',`${exkey}-${exweight}-kg`)
@@ -164,6 +202,7 @@ function artist(exkey,exweight,callby,excont,parent,heading,rep){
             submit.setAttribute('class','btn');
             submit.setAttribute('onclick','submitdata(event)');
             submit.innerText = 'Submit'
+            inputs.appendChild(repcross)
             inputs.appendChild(inputweight)
             inputs.appendChild(inputexrep);
             inputs.appendChild(inputrep);
@@ -174,8 +213,8 @@ function artist(exkey,exweight,callby,excont,parent,heading,rep){
                 set.appendChild(inputs);
             }if(callby==0){//if called by drawex fn
                 let bttn = document.createElement('button');
-                bttn.innerText='Add Set';
-                bttn.setAttribute('class','btn');
+                bttn.innerText='+';
+                bttn.setAttribute('class','plus');
                 bttn.setAttribute('onclick','addset(event)')
                 excont.appendChild(heading);
                 excont.appendChild(bttn);
@@ -201,7 +240,7 @@ function artist(exkey,exweight,callby,excont,parent,heading,rep){
                 excont.appendChild(textcont);
             }
 }
-function drawex(exername,exweight,rep){
+function drawex(exername,exweight,rep,day){
     let exkey = exername.replaceAll(' ','')
         let parent = document.getElementById('maincont');
         if(exername!=null&& !isNaN(exweight)&&exweight!=''){
@@ -209,16 +248,29 @@ function drawex(exername,exweight,rep){
         excont.setAttribute('class','excont');
         excont.setAttribute('id',`${exkey}-cont`);
         let heading = document.createElement('div');
-        
+
+        let slectdate = document.createElement('select');
+        slectdate.setAttribute('id','');
+        slectdate.setAttribute('onchange','datechange(event)');
+       for(i=0;i<=7;i++){
+        let elem = document.createElement('option');
+        elem.setAttribute('value',datedata.get(i));
+        elem.innerText = datedata.get(i);
+        if(day==datedata.get(i)){
+            elem.selected=true;
+        }
+        slectdate.appendChild(elem);
+       }
         heading.setAttribute('class','head');
         heading.setAttribute('id',`${exkey}-head`);
         heading.setAttribute('onclick','hideme(event)')
-        heading.innerText = exername;
+        heading.innerHTML = `<div id = '${exkey}-head-text' class="head-text">${exername}</div>`
         let cross = document.createElement('div');
         cross.innerText ='X';
         cross.setAttribute('class','cross');
         cross.setAttribute('onclick','deletework(event)');
         cross.setAttribute('id',`${exkey}-cross`);
+        heading.appendChild(slectdate);
         heading.appendChild(cross)
         artist(exkey,exweight,0,excont,parent,heading,rep)//0 denotes callby drawex fn to artist
         }else{
@@ -289,12 +341,9 @@ function test(name,call){
             db = event.target.result;
             db.createObjectStore('workout',{ keyPath: 'workname'});  
     }
-   
     }else{
-        console.log('startup not found')
-        
-        
-    } 
+        console.log('startup not found') 
+    }   
 }
 function disptxt(event){
     let parent = event.target.parentNode.id;
@@ -366,4 +415,47 @@ function deletework(event){
             }
         }
     }
+}
+function deleterep(eventd){
+    let key = eventd.target.id.split('-');
+    let dbreq = indexedDB.open('ptrack');
+    dbreq.onsuccess = function(event){
+        let db = event.target.result;
+        let transaction = db.transaction(['workout'],'readwrite');
+        let store = transaction.objectStore('workout');
+        store.get(key[0]).onsuccess= function(event){
+            let data = event.target.result;
+            let index = data.kg.indexOf(key[1]);
+            data.kg.splice(index,1);
+            data.rep.splice(index,1);
+            if(data.kg.length==0){
+                deletework(eventd)
+            }else{
+                store.put(data).onsuccess=function(event){
+                    let ip = document.getElementById(`${key[0]}-${key[1]}-ip`)
+                    ip.style['display']='none';
+                }
+            }
+        }
+    }
+}
+function datechange(eventr){
+    let key = eventr.target.parentNode.id.split('-')[0];
+    let dbreq = indexedDB.open('ptrack');
+    dbreq.onsuccess = function(event){
+        let db = event.target.result;
+        let transaction = db.transaction(['workout'],'readwrite');
+        let store = transaction.objectStore('workout');
+        store.get(key).onsuccess=function(event){
+            let data= event.target.result;
+            data.day=eventr.target.value;
+            store.put(data).onsuccess=function(event){
+            }
+        }
+    }
+}
+function showall(){
+    let main = document.getElementById('maincont');
+    main.innerHTML = '';
+    datapoppulator(0);
 }
