@@ -42,13 +42,21 @@ body{
     
 }
 .welcome{
-    margin-left: 500px;
-    margin-right: 500px;
+    /* margin-left: 500px;
+    margin-right: 500px; */
+    width: 600px;
     border: #8A7AAE 2px solid;
     border-style: dashed;
     padding: 10px;
     margin-bottom: 50px;
     line-height: 40px;
+}
+.welcont{
+    width:100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
 }
 .excont{
     display:grid;
@@ -86,21 +94,21 @@ body{
     
 }
 .btn{
+    margin-top: 7px;
     align-self: flex-end;
     justify-self: baseline;
     margin-left: 10px;
     margin-bottom: 20px;
-    background-color: #D3B46A;
+    background-color: rgba(98, 201, 98, 0.815);
     color: black;
     margin-right: 10px;
-    width: 100px;
-   height: 40px;
+    width: fit-content;
+   height: 20px;
    border: none;
-   border-radius: 5px;
+   border-radius: 2px;
    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 .plus{
-  
     align-self: flex-end;
     justify-self: baseline;
     margin-left: 10px;
@@ -113,9 +121,8 @@ body{
     width:fit-content;
     height: 30px;
     border: none;
-    border-radius: 5px;
+    border-radius: 2px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
 }
 .header{
     font-size: 27px;
@@ -125,7 +132,7 @@ body{
     flex-wrap: wrap;
     justify-content: center;
     align-content: center;
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
     color: #ccbcf1;
 }
 .addcont{
@@ -214,6 +221,76 @@ body{
 .head-text{
     min-width: 200px;
 }
+.alert{
+    width: 100%;
+    height: 0px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    background-color: rgba(143, 236, 143, 0.671);
+    margin-top: 0px;
+    overflow: hidden;
+    color: black;
+    transition: 0.3s;
+}
+.con{
+    margin-left: 20px;
+}
+.wip{
+    height: 20px;
+    width: 75px;
+    display: none;
+}
+.plotter{
+    
+    height: fit-content;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 40px;
+}
+.gip{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+   
+}
+.gip input{
+    width: 150px;
+    margin-left: 20px;
+    height: 30px;
+    margin-top: 50px;
+}
+.gip button{
+    background-color: #8A7AAE;
+    border: none;
+    margin-left: 20px;
+    width: 70px;
+    height: 30px;
+    margin-top: 50px;
+}
+fieldset{
+    height: fit-content;
+    margin-left: 20px;
+    margin-right: 20px;
+    width: 600px;
+}
+.graphip{
+    display: flex;
+    justify-content: center;
+}
+.max{
+    display: flex;
+    justify-content: center;
+}
+#viewer{
+    cursor: pointer;
+    text-transform: capitalize;
+}
+select{
+    text-transform: capitalize;
+}
 @media screen and (max-width:650px) {
   
     .delbtn{
@@ -224,11 +301,11 @@ body{
         height: 100px;
     }
     .reps{
-        width: 68px;
+        width: 60px;
         margin-left: 10px;
     }
     .weight{
-        width: 50px;
+        width: 35px;
         margin-right: 10px;
     }
     
@@ -242,15 +319,6 @@ body{
     }
     #addr{
         height: 35px;
-    }
-    .btn{
-        height: 35px;
-        width: 60px;
-    }
-    .ip .btn{
-        margin-left:154px;
-        margin-top: 20px;
-        margin-bottom: 5px;
     }
     .ip{
         margin-bottom: 10px;
@@ -275,22 +343,39 @@ body{
     select{
         width: 75px;
     }
-    
-    
+    fieldset{
+        margin-left: 0px;
+        margin-right: 0px;
+        padding: 0px;
+    }
+    .gip{
+        justify-content: space-between;
+    }
+    .gip input{
+        width: 75px;
+    }
+    .gip button{
+        width: 75px;
+        margin-right: 20px;
+    }
 
 }
-@media screen and (max-width:370px) {
+@media screen and (max-width:380px) {
     .reps{
-        width: 60px;
+        width: 50px;
         margin-left: 10px;
     }
     .weight{
-        width: 45px;
+        width: 30px;
         margin-right: 10px;
     }
-    .ip .btn{
-        margin-left:140px;
-        margin-top: 20px;
-        margin-bottom: 5px;
+    fieldset{
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+}
+@media screen and (max-width:380px){
+    .gip input,.gip button{
+        margin-left: 5px;
     }
 }

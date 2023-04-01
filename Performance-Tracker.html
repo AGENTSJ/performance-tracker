@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance-Tracker</title>
+    <link rel="stylesheet" href="ptrack2.css">
+</head>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<body>
+    <div class="header">
+        <h1>P-Track</h1>
+    </div>
+    <div class="alert" id="alert">
+        <p id="mesg">Are you sure</p><br>
+       <p class="con">Yes</p><input type="checkbox" name="con" id="confirm"><br>
+       <p class="con">No</p><input type="checkbox" name="con" id="reject">
+        
+    </div>
+   
+    <div class="dele">
+        <button onclick="deledb()" class="delbtn">Delete</button>
+        <p onclick="showall()" id="viewer">View All</p>
+    </div>
+    <div class="welcont">
+        <div class="welcome" id="welc">
+            Hey this app can help you track your strenght performance on a workout to workout basis.
+            Start by adding your workouts bellow
+        </div>
+    </div>
+    <div class="maincont"id="maincont">
+    </div>
+    <div class="addcont">
+        <button id="addr">add</button>
+        <input type="text" name="ex-name" id="ex-name" placeholder="workout">
+        <input type="number" name="ex-weight" id="ex_weight" placeholder="weight">
+    </div>
+
+    <div class="graphip">
+        <fieldset>
+
+            <legend><label for="gptxt">Progress</label></legend>
+            <div class="gip">
+                <input type="text" name="ex-name" placeholder='workout' id="gptxt">
+                <input type="number" name="ex-weight" placeholder='weight' id="gpw">
+                <button onclick="dispgraph()">check</button>
+            </div>
+            <div class="plotter" id="plot">
+    
+            </div>
+
+            <div id="max" class="max">
+                
+            </div>
+           
+        </fieldset>
+    </div>
+    
+</body>
+<script src="ptrack2.js"></script>
+</html>
+

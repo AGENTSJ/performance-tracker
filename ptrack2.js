@@ -11,48 +11,70 @@ let datedata = new Map([
     [6,'saturday'],
     [7,'NA']
 ])
+let dater = new Date();
+let time =`${dater.getDate()}-${dater.getMonth()+1}-${dater.getFullYear()}`
 
 manager();
 function addex(){
+        let exw = document.getElementById('ex_weight');
         let exername = document.getElementById('ex-name').value;
-        let exweight = document.getElementById('ex_weight').value;    
-            if(exername!=null&& !isNaN(exweight)&&exweight!=''){
+        let exweight = exw.value;    
+        if(exername!==''){
+            if(exweight==''){
+                exw.focus();
+            }else{
                 if(exername.length<=15){
-                    drawex(exername,exweight)
+                    drawex(exername,exweight,null,datedata.get(new Date().getDay()))
                     initdb(exername,exweight);
                     document.getElementById('ex-name').value = null;
                     document.getElementById('ex_weight').value = null;
                 }else{
                     alert('Shorten the name..what is this an essay?')
                 }
+            }
         }else{
             alert('alerady exsist or provide correct format')
         }   
 }
 function addset(event){
-    let exweight = prompt('give the weight');
-    if(exweight==null||exweight==''){
-        return
+    let temp = event.target.parentNode.parentNode.id;
+    let exkey = temp.split('-')[0];
+    let ip = document.getElementById(`${exkey}-wip`);
+    let exweight = parseInt(ip.value,10);
+    let bttn = document.getElementById(`${exkey}-bttn`)
+    if(event.target.classList.contains('flag')){
+        bttn.innerText='+'
+        if(!exweight==''){
+            addsetdb(exkey,exweight);
+        }
+        ip.value = null;
+        event.target.classList.remove('flag');
+        ip.style['display']='none';
     }else{
-        console.log(exweight);
-        let temp = event.target.parentNode.id;
-        let exkey = temp.split('-')[0]
-        drawset(exweight,temp)
-        addsetdb(exkey,exweight);
+        bttn.innerText='Add';
+        ip.style['display']='inline-block'
+        ip.focus()
+        event.target.classList.add('flag');
     }
 }
 function deledb(){
-    let confirm = prompt('Are you sure you want to delete all the data if yes type YES else No');
-    if (confirm.toLocaleUpperCase()=='YES'){
 
+    let console = document.getElementById('alert');
+    console.style['height']='fit-content';
+    document.getElementById('confirm').addEventListener('change',proceed)
+    let rej = document.getElementById('reject')
+    rej.addEventListener('change',reject)
+    function proceed(){
         let delereq = indexedDB.deleteDatabase('ptrack');
             delereq.onsuccess = function(event){
             console.log('removed'+`${event.result}`);
             console.log(event);
         }
         location.reload();
-    }else{
-        return 0;
+    }
+    function reject(){
+        console.style['height']='0px';
+        rej.checked = false;
     }
 }
 function manager(){
@@ -78,7 +100,7 @@ function initdb(e,w){
     let transaction;
     let store
     let storename = e.replaceAll(' ','');
-    let data = {workname:storename,kg:[parseInt(w,10)],rep:[[0,0]],desc:'',day:datedata.get(new Date().getDay())}
+    let data = {workname:storename,kg:[parseInt(w,10)],rep:[[0,0]],desc:'',day:datedata.get(new Date().getDay()),date:[ [time,time] ],max:[0]}//new--
     let dbreq = indexedDB.open('ptrack',version);
     dbreq.onerror = function (params) {
     console.log('error in initilisation');
@@ -92,7 +114,7 @@ dbreq.onsuccess = function(event){
         adddata.onsuccess = function(){
             let welcome = document.getElementById('welc');
             welcome.style['display']='none' 
-            alert('data added')
+            // console.log('data added');
         }
         adddata.onerror = function(){
             alert('exersise already exsist');
@@ -114,18 +136,20 @@ function addsetdb(id,w){
         getadat.onsuccess = function(event){
             let data = event.target.result;
             if(!data.kg.includes(weight)){
-
                 data.kg.push(parseInt(w,10));
                 data.rep.push([0,0])
+                data.date.push([time,time])
+                data.max.push(0);
                 let adddata = store.put(data);
                 adddata.onerror = function (params) {
                     console.log('error in add data');
                 }
                 adddata.onsuccess = function (params) {
-                    alert('set added')
+                    console.log('setadded');
+                    drawset(parseInt(w,10),data.workname);
                 }
             }else{
-                alert('same set already there')
+                alert('already exsist')
                 location.reload()
             }
         }
@@ -195,13 +219,14 @@ function artist(exkey,exweight,callby,excont,parent,heading,rep){
             inputrep.setAttribute('id',`${exkey}-${exweight}-rep`)
             let newrep = document.createElement('input');
             newrep.setAttribute('class','reps');
+            newrep.setAttribute('type','number');
             newrep.setAttribute('placeholder','Reps')
             newrep.setAttribute('id',`${exkey}-${exweight}-newrep`)
             let submit = document.createElement('button');
             submit.setAttribute('id',`${exkey}-${exweight}`)
             submit.setAttribute('class','btn');
             submit.setAttribute('onclick','submitdata(event)');
-            submit.innerText = 'Submit'
+            submit.innerText = 'O'
             inputs.appendChild(repcross)
             inputs.appendChild(inputweight)
             inputs.appendChild(inputexrep);
@@ -212,12 +237,23 @@ function artist(exkey,exweight,callby,excont,parent,heading,rep){
                 let set = document.getElementById(exkey);
                 set.appendChild(inputs);
             }if(callby==0){//if called by drawex fn
+                let tempcont = document.createElement('div');
+
                 let bttn = document.createElement('button');
                 bttn.innerText='+';
+                bttn.setAttribute('id',`${exkey}-bttn`)
                 bttn.setAttribute('class','plus');
                 bttn.setAttribute('onclick','addset(event)')
+                let wip = document.createElement('input');
+                wip.setAttribute('type','number');
+                wip.setAttribute('class','wip');
+                wip.setAttribute('placeholder','Weight')
+                wip.setAttribute('id',`${exkey}-wip`);
+                tempcont.appendChild(bttn);
+                tempcont.appendChild(wip);
                 excont.appendChild(heading);
-                excont.appendChild(bttn);
+                excont.appendChild(tempcont);
+                // excont.appendChild(wip)
                 parent.appendChild(excont);
                 let set = document.createElement('div');
                 set.setAttribute('class','set');
@@ -248,7 +284,6 @@ function drawex(exername,exweight,rep,day){
         excont.setAttribute('class','excont');
         excont.setAttribute('id',`${exkey}-cont`);
         let heading = document.createElement('div');
-
         let slectdate = document.createElement('select');
         slectdate.setAttribute('id','');
         slectdate.setAttribute('onchange','datechange(event)');
@@ -295,7 +330,7 @@ function submitdata(event){
     let exrep = document.getElementById(exrepkey);
     let rep = document.getElementById(repkey).value;
     let newrep = document.getElementById(newrepkey).value;
-if(newrep!=''){
+if(newrep!=''&&!isNaN(newrep)){
     let dbreq = indexedDB.open('ptrack');
     dbreq.onsuccess = function(event){
         let db = event.target.result;
@@ -306,15 +341,22 @@ if(newrep!=''){
         getdata.onsuccess = function(event){
             let data = event.target.result;
             let index = data.kg.indexOf(kg);
-            data.rep[index].shift()
+            if(data.rep[index].length==30){
+                data.rep[index].shift();
+                data.date[index].shift();
+            }
+            if(data.max[index]<parseInt(newrep,10)){
+                data.max[index]=parseInt(newrep,10);
+            }
             data.rep[index].push(parseInt(newrep,10))
-            
+            data.date[index].push(time);
+               
             let adddata = store.put(data);
             adddata.onsuccess = function(event){
                 console.log('rep upated')
+                
             }
         }
-      
     } 
     document.getElementById(newrepkey).value = null;
     document.getElementById(repkey).value = newrep;
@@ -401,8 +443,13 @@ function hideme(event){
 function deletework(event){
     let key = event.target.id;
     let work  = key.split('-')[0];
-    let confirm = prompt(`Are you sure you want to delete ${work} if yes then type yes`)
-    if(confirm.toLocaleUpperCase()=='YES'){
+    // let confirm = prompt(`Are you sure you want to delete ${work} if yes then type yes`)
+    let console = document.getElementById('alert');
+    console.style['height']='fit-content';
+    document.getElementById('confirm').addEventListener('change',proceed)
+    let rej = document.getElementById('reject')
+    rej.addEventListener('change',reject)
+    function proceed(){
         let dbreq = indexedDB.open('ptrack');
         dbreq.onsuccess = function(event){
             let db = event.target.result;
@@ -410,10 +457,13 @@ function deletework(event){
             let store = transaction.objectStore('workout');
             let deldata = store.delete(work);
             deldata.onsuccess = function(event){
-                console.log(`data deleted`);
                 location.reload();
             }
         }
+    }
+    function reject(){
+        console.style['height']='0px';
+        rej.checked = false;
     }
 }
 function deleterep(eventd){
@@ -455,7 +505,61 @@ function datechange(eventr){
     }
 }
 function showall(){
+    let view = document.getElementById('viewer');
     let main = document.getElementById('maincont');
-    main.innerHTML = '';
-    datapoppulator(0);
+    if(view.innerText ==`View All`){
+        main.innerHTML = '';
+        datapoppulator(0);
+        view.innerText=`${datedata.get(dater.getDay())+`'s`}`
+    }else{
+        main.innerHTML = '';
+        view.innerText=`View All`;
+        datapoppulator(1);
+    }
+}
+function dispgraph(){
+    let gip = document.getElementById('gptxt').value.replaceAll(' ','');
+    let w = document.getElementById('gpw')
+    let gpw = w.value;
+    if(!gip==''){
+        if(gpw==''){
+            w.focus();
+        }else{
+            indexedDB.open('ptrack').onsuccess=function(event){
+                let db = event.target.result;
+                let transaction = db.transaction(['workout'],'readwrite');
+                let store = transaction.objectStore('workout');
+                let getdata= store.get(gip)
+                getdata.onsuccess=function(event){
+                    let data = event.target.result;
+                    if(data==null){
+                        console.log('error');
+                    }else{
+                        let max = document.getElementById('max');
+                        let pl = document.getElementById('plot')
+                        let index = data.kg.indexOf(parseInt(gpw,10));
+                        if(index!==-1){
+                            max.innerHTML=`<p>MAX: ${data.max[index]}</p>`
+                        let xarray = data.date[index];
+                        let yarray = data.rep[index];
+                        let plotter = [
+                            {x: xarray,y: yarray,mode: `lines`,type: 'scatter'}
+                        ]
+                        let layout = {
+                            xaxis: { title: "date"},
+                            yaxis: { title: "reps"},
+                            title: `${data.workname} KG:${data.kg[index]}`
+                            
+                          };
+                        Plotly.newPlot('plot',plotter,layout)
+                        }else{
+                            pl.innerHTML='';
+                            max.innerHTML=`Weight nto found`
+                        }
+                    }
+                }
+            }
+        }
+        
+    }
 }
