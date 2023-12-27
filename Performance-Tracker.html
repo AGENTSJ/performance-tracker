@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Performance-Tracker</title>
-    <link rel="stylesheet" href="ptrack2.css">
+    <link rel="stylesheet" href="ptrack5.css">
 </head>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <body>
@@ -18,46 +18,107 @@
        <p class="con">No</p><input type="checkbox" name="con" id="reject">
         
     </div>
-   
-    <div class="dele">
-        <button onclick="deledb()" class="delbtn">Delete</button>
+    <div class="view">
+        <button class="menubtn" onclick="toggleSettings()" id="stngbtn">Settings</button>
         <p onclick="showall()" id="viewer">View All</p>
+        
     </div>
-    <div class="welcont">
-        <div class="welcome" id="welc">
-            Hey this app can help you track your strenght performance on a workout to workout basis.
-            Start by adding your workouts bellow
-        </div>
-    </div>
-    <div class="maincont"id="maincont">
-    </div>
-    <div class="addcont">
-        <button id="addr">add</button>
-        <input type="text" name="ex-name" id="ex-name" placeholder="workout">
-        <input type="number" name="ex-weight" id="ex_weight" placeholder="weight">
-    </div>
-
-    <div class="graphip">
-        <fieldset>
-
-            <legend><label for="gptxt">Progress</label></legend>
-            <div class="gip">
-                <input type="text" name="ex-name" placeholder='workout' id="gptxt">
-                <input type="number" name="ex-weight" placeholder='weight' id="gpw">
-                <button onclick="dispgraph()">check</button>
-            </div>
-            <div class="plotter" id="plot">
     
-            </div>
+    <div class="ptrackCont">
 
-            <div id="max" class="max">
+        <div class="menu" id="stng">
+            
+            <div class="uploadDesc">
+                <p>Download your data as Backup</p>
+                <button class="innerMB" onclick="backup()">Backup</button>
+            </div>
+            
+            <div class="uploadDesc">
+                <p>Upload backup file here to add to app data</p>
+                <div class="upload">
+                    <input type="file" id="fileinp">
+                    <button class="innerMB" onclick="copyDb()">Upload</button>
+                </div>
+            </div>
+            
+            <div class="selectview" id="viewDAy">
+                <div class="viewDesc">
+                    <p>
+                        View workouts from the Selected day.
+                    </p>
+                </div>
+                <!-- <button class="innerMB" onclick="datapoppulator(3)">View</button> -->
+            </div>
+            <div class="menuDesc">
+                <p>Delete the whole app data</p>
+                <button onclick="deledb()" class="delbtn">Delete</button>
+            </div>
+            
+            
+           </div>
+          
+            <div class="welcont">
+                <div class="welcome" id="welc">
+                    Hey this app can help you track your strength performance on a workout to workout basis.
+                    Start by adding your workouts bellow
+                </div>
+            </div>
+            <div class="maincont" id="maincont">
+            </div>
+            <div class="addcont">
+                <button id="addr">Add</button>
+                <input type="text" name="ex-name" id="ex-name" placeholder="workout">
+                <input type="number" name="ex-weight" id="ex_weight" placeholder="weight">
+            </div>
+        
+            <div class="graphip">
+                <fieldset>
+        
+                    <legend><label for="gptxt">Progress</label></legend>
+                    <div class="gip">
+                        <input type="text" name="ex-name" placeholder='workout' id="gptxt">
+                        <input type="number" name="ex-weight" placeholder='weight' id="gpw">
+                        <button onclick="dispgraph()">Check</button>
+                    </div>
+                    <div class="plotter" id="plot">
+            
+                    </div>
+        
+                    <div id="max" class="max">
+                        
+                    </div>
+                   
+                </fieldset>
+            </div>
+        
+            <div class="shift">
+                <fieldset>
+                    <legend><label for="">Change day</label></legend>
+                        <div class="shftcont">
+        
+                            <div class="fromcont">
+                                <h5>From</h5>
+                                <div id="shftday"></div>
+                            </div>
+        
+                            <div class="tocont">
+                                <h5>To</h5>
+                                <div id="to_shftday"></div>
+                            </div>
+
+                            <button onclick="ShiftDate(event)">Change</button>
+                        </div>
+                </fieldset>
+            </div>
+   
+        
+        
+        
                 
-            </div>
-           
-        </fieldset>
     </div>
-    
+    <script src="ptrack6.js"></script>
 </body>
-<script src="ptrack2.js"></script>
+
+
 </html>
 
