@@ -3,8 +3,5 @@
 ## It uses IndexedDb for its operations
 
 ## Tech stack used
-### IndexedDb 
-### Html
-### Css
-### JS
+### IndexedDb ,Html ,Css ,JS
 ## Live link https://agentsj.github.io/Performance-Tracker.github.io/
